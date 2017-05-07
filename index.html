@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="assets/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+	<script src="assets/javascript/game.js"> </script>
+
+
+	<title>Document</title>
+</head>
+<body>
+<div class="logo"><br> <br> <br> <br> </div>
+	
+
+<div class="container">
+
+
+	<h1> Hangman</h1>
+	
+	<section class="bsec">
+		<p> Press any key to get started! </p>
+		<br> 
+
+		<p class="stl"> Wins </p>
+		<div id="wincnt">&nbsp; </div>
+		<br>
+
+		<p class="stl"> Current Word </p>
+		<div id="CurrentWord"> </div>
+		<br>
+
+
+		<p class="stl"> Number of guesses remaining </p>
+		<div id="remainingcnt">&nbsp;  </div>
+		<br>
+
+		<p class="stl"> Letter already guessed </p>
+		<div id="guessedrd">&nbsp;  </div>
+	</section>
+
+</div>
+
+<script>
+
+
+document.getElementById("CurrentWord").innerHTML = underScore.join(" ");
+document.getElementById("remainingcnt").innerHTML = remaining;
+document.getElementById("wincnt").innerHTML = win;
+
+
+</script>
+
+
+</body>
+</html>

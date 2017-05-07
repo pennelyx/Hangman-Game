@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Rock Paper Scissors Part 9</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    
+    <link rel="stylesheet" type="text/css" href="http://bootswatch.com/yeti/bootstrap.min.css">
+
+    <style type="text/css">
+      .template{
+        display: none;
+      }
+
+      .table-wrapper{
+        max-height: 300px;
+        overflow-y: scroll;
+      }
+
+      table{
+        border: 1px solid #cdcdcd;
+        border-bottom: 3px solid #c1c1c1;
+        border-radius: 6px;
+      }
+
+      td{
+        padding: 6px 10px;
+      }
+
+      tr{
+        border-bottom: 1px solid #dddddd;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- When we start playing the game, our HTML will be placed into this div. -->
+    <div class='container'>
+      <div class="row">
+        <div class="col-md-12">
+          <h3 class='lead'>Press the "R", "P" or "S" keys to start playing!</h3>    
+        </div> 
+      </div>
+      
+      <div class='row'>
+        <div class='col-md-3'>
+          <div class="panel panel-success">
+            <div class="panel-heading"><h3 class='panel-title'>Round #</h3></div>
+            <div class="panel-body"><span id="round">0</span></div>
+          </div>
+        </div>
+        <div class='col-md-3'>
+          <div class="panel panel-success">
+            <div class="panel-heading"><h3 class='panel-title'>Wins</h3></div>
+            <div class="panel-body"><span id="wins">0</span></div>
+          </div>
+        </div>
+        <div class='col-md-3'>
+          <div class="panel panel-success">
+            <div class="panel-heading"><h3 class='panel-title'>Losses</h3></div>
+            <div class="panel-body"><span id="losses">0</span></div>
+          </div>          
+        </div>
+        <div class='col-md-3'>
+          <div class="panel panel-success">
+            <div class="panel-heading"><h3 class='panel-title'>Ties</h3></div>
+            <div class="panel-body"><span id="ties">0</span></div>
+          </div>          
+        </div>                
+      </div>
+
+      <div class="row">
+        <div class='col-md-12'>
+          <p>Match Log 
+            <div class='table-wrapper'>
+              <table class='table table-striped' id="statsTable">
+                <thead>
+                  <th>Round #</th>
+                  <th>Computer Move</th>
+                  <th>User Move</th>
+                  <th>Result</th>
+                </thead>
+                <tbody>
+                  <tr class='clone-row template' id="statsRow">
+                    <td class='round-stat'>
+                      
+                    </td>                   
+                    <td class='computer-stat'>
+                      
+                    </td>
+                    <td class='user-stat'>
+                      
+                    </td>
+                    <td class='result-stat'>
+                      
+                    </td>                        
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </p>          
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      // Our object of possible computer choices and what they're beaten by
+      // we can access what the choice loses against by the following syntax:
+      // choices[key].losesAgainst
+      var choices = {
+        "r" : { losesAgainst: "p" },
+        "p" : { losesAgainst: "s" },
+        "s" : { losesAgainst: "r" }
+      };
+
+      // Variables for tracking our wins, losses, ties and the round number
+      var stats = {
+        "wins" : 0,
+        "losses" : 0,
+        "ties" : 0,
+        "round" : 0
+      };
+
+      // When the user presses a key, it will run the following function
+      // Event can be named anything we want here, but what's important is
+      // what we receive as the argument. console.log(event) will show you all
+      // of the available properties on the argument passed into this function.
+      document.onkeyup = function( event ) {
+        // Determine which key was pressed
+        var userChoice = event.key;
+        // We're creating a local variable here (result) that will only be used
+        // for the lifetime of this function. We're initializing it as "false"
+        // so that we can't get it confused with any value we may set it to.
+        var result = false;
+        // Determine the computer's choice based on a random choice
+        // First, create the random number
+        // This works as such:
+        // Math.random() generates a number between 0.000...(infinite)... and .99** repeating
+        //    we then multiply that number by the length of our choices array
+        //    and we get a number between 0 and our maximum array length
+        // We then run Math.floor() on that value to get a round number so that
+        //    we can choose an index from our array
+        //    a faux run through how this resolves would look like:
+        //    
+        //    randomNum = Math.floor( Math.random() * Object.keys(choices).length ) =>
+        //       Math.random resolves to 0.9 and 
+        //       Object.keys(choices).length resolves to 3 =>
+        //    randomNum = Math.floor( 0.9 * 3 )  =>
+        //       0.9 * 3 resolves to 2.7, Math.floor rounds down =>
+        //    randomNum = 2;
+        // As the number is randomly generated, this can range from 0 => max
+        //    length of the array 
+        var randomNum = Math.floor(Math.random() * Object.keys(choices).length);
+        // Now - we use the randomNum generated above to select a random
+        // element from our array
+        var computerChoice = Object.keys(choices)[randomNum];
+        // If choices[userChoice] isn't a key, it will return undefined
+        // and we can return to end the function's execution
+        if( choices[userChoice] ){
+          // If the choices match, it's a tie
+          if( userChoice === computerChoice ){
+            // if we tied, add to the ties, and set result to "T" so
+            // that we can display it
+            stats.ties++;
+            result = 'T';
+          } 
+          // We can access our .losesAgainst property to figure out whether or
+          // not we lost the match based on our choice
+          else if( choices[userChoice].losesAgainst === computerChoice ){
+            // ^^ see above but for losses
+            stats.losses++;
+            result = 'L';
+          }
+          else{
+            // ^^ See above, but for wins
+            stats.wins++;
+            result = 'W';
+          }
+          // increase the round number
+          stats.round++;
+
+          for( var i = 0; item = ["wins", "losses", "ties", "round"][i]; ++i){
+            document.getElementById(item).innerHTML = stats[item];
+          }
+
+          var statsRow = document.querySelector("#statsRow").cloneNode(true);
+          var statsTable = document.querySelector("#statsTable");
+
+          statsRow.querySelector(".user-stat").innerHTML = userChoice;
+          statsRow.querySelector(".computer-stat").innerHTML = computerChoice;
+          statsRow.querySelector(".result-stat").innerHTML = result;
+          statsRow.querySelector(".round-stat").innerHTML = stats.round;
+          statsRow.className = statsRow.className.replace("template", "");
+
+          statsTable.appendChild(statsRow);
+        }
+        else{
+          return;
+        }
+      };
+
+    </script>
+
+  </body>
+</html>
